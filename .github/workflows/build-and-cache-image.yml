@@ -1,0 +1,37 @@
+name: Build and cache image
+
+on:
+  workflow_dispatch:
+  push:
+env:
+  IMAGE_TAG: google-play-cancellation-scraper:latest
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    name: Build and cache image
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Cache Docker image
+        id: docker-cache
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-image-${{ github.sha }}
+          
+      - name: Set up Docker Buildx
+        if: steps.docker-cache.outputs.cache-hit != 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        if: steps.docker-cache.outputs.cache-hit != 'true'
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          load: true
+          context: .
+          file: ./Dockerfile
+          tags: ${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

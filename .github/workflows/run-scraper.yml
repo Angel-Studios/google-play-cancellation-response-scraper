@@ -1,0 +1,51 @@
+name: Run scraper
+
+on:
+  workflow_dispatch:
+  # Add additional triggers here, for example:
+  # Run everyday at 8am MST / 9am MDT
+  # schedule:
+    # - cron: '0 15 * * *'
+env:
+  IMAGE_TAG: google-play-cancellation-scraper:latest
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    name: Run scraper
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Get Docker image from cache
+        id: docker-cache
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-image-${{ github.sha }}
+          
+      - name: Run Docker image and store output
+        id: docker-run
+        run: |
+          git fetch
+          git checkout output && git pull || git switch --orphan output
+
+          docker run --rm \
+            -e SLACK_API_TOKEN=${{ secrets.SLACK_API_TOKEN }} \
+            -e SLACK_CHANNEL_NAME=${{ secrets.SLACK_CHANNEL_NAME }} \
+            -e GCS_BUCKET_ID=${{ secrets.GCS_BUCKET_ID }} \
+            -e SERVICE_ACCOUNT_JSON=${{ secrets.SERVICE_ACCOUNT_JSON }} \
+            -v .:/output \
+            ${IMAGE_TAG}
+
+          [[ -z $(git status --porcelain) ]] && exit 0
+
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git config --global user.name "github-actions"
+
+          git add .
+          git commit -m "Storing output from run #${{ github.run_number }}"
+          git push --set-upstream origin output

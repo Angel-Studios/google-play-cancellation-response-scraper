@@ -1,0 +1,2 @@
+com.example.app1:#example-app-cancellation-responses
+com.example.app2:#example-app-cancellation-responses
