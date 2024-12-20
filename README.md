@@ -6,7 +6,7 @@ Built on [GitHub Actions](https://docs.github.com/en/actions), [Docker](https://
 
 ## Example Slack Output
 
-<img src="https://github.com/user-attachments/assets/33951b92-8860-4aa9-972a-710cdf636d0b" width="500">
+<img src="https://github.com/user-attachments/assets/42e29711-ae33-4c35-8172-745cfd6c780c" width="500">
 
 ## How to Use
 
@@ -14,7 +14,7 @@ Built on [GitHub Actions](https://docs.github.com/en/actions), [Docker](https://
 
 2. Define the following variables as GitHub Actions secrets:
   * **`GCS_BUCKET_ID`** - The Google Cloud Storage bucket ID that your cancellation survey responses live in.<br>**Example:** `pubsite_prod_1234567890123456789`. This can be obtained by:
-    * On the "Subscription cancellations" page of the Google Play Console, click the "Download written responses" button:<br><img src="https://github.com/user-attachments/assets/52ad3487-ebff-49f8-b677-0defd70d83b0" width="400">
+    * On the "Subscription cancellations" page of the Google Play Console, click the "Download written responses" button:<br><img src="https://github.com/user-attachments/assets/51aa7bbc-dc24-4c6c-94ad-96e88f43803c" width="400">
     * Go to your browser's download history and copy the download link for the file.
     * Near the beginning of the URL, look for a path segment that begins with `pubsite_prod`.  This is your bucket id.
   * **`SERVICE_ACCOUNT_JSON`** - Base64 encoded JSON key for a Google Cloud service account. After downloading the JSON key, you can base64 encode it with this command: `base64 -w0 /path/to/key.json`
