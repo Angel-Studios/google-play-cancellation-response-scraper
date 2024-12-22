@@ -27,11 +27,13 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.slack.api.Slack
 import io.blackmo18.kotlin.grass.dsl.grass
+import java.io.File
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.File
 
 // Util functions
 
@@ -176,7 +178,8 @@ class CancellationResponsesParser : CliktCommand() {
             appendLine("*New Google Play Cancellation Responses for $appName*")
         }
 
-        val dispatch = {
+        @OptIn(ExperimentalTime::class)
+        val dispatch = suspend {
             Slack.getInstance()
                 .methods(slackApiToken)
                 .chatPostMessage { request ->
@@ -188,6 +191,9 @@ class CancellationResponsesParser : CliktCommand() {
                         println("Sent message #${++messageNumber} to $slackChannelName, length ${builder.length} of $maxLength")
                     }
                 }
+
+            // Slack API rate limits requests to 1 second (with lenience)
+            delay(1.seconds)
         }
 
         responsesToNotify.forEach { response ->
@@ -200,7 +206,6 @@ class CancellationResponsesParser : CliktCommand() {
 
             if ((builder.length + responseText.length) >= maxLength) {
                 dispatch()
-                delay(1000)
                 builder = StringBuilder(responseText)
             } else {
                 builder.append(responseText)
