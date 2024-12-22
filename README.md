@@ -32,7 +32,7 @@ Built on [GitHub Actions](https://docs.github.com/en/actions), [Docker](https://
 
 4. Ensure that the "Build and cache image" action has been run at least once after the mapping files have been edited.  By default, this is done after each push to main.
 
-5. Use the `Run scraper` action to fetch and post new responses to Slack.  Or, configure workflow triggers inside `run-scraper.yml` as desired.
+5. Use the "Run scraper" action to fetch and post new responses to Slack.  Or, configure workflow triggers inside `run-scraper.yml` as desired.
 
 ## Notes
 
