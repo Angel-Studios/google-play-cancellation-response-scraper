@@ -23,6 +23,7 @@ import com.github.ajalt.clikt.core.ParameterHolder
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
+import com.github.ajalt.clikt.parameters.types.boolean
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.slack.api.Slack
@@ -106,6 +107,10 @@ class CancellationResponsesParser : CliktCommand() {
     private val slackApiToken: String by option(
         help = "Token for the Slack app/bot to send messages with",
     ).required()
+
+    private val dispatchEachResponse: Boolean? by option(
+        help = "Dispatch each response as an individual message (default: false)",
+    ).boolean()
 
     private val appName by lazy { packageMapPath.readMap().safeGet(packageName) }
     private val skuMap by lazy { skuMapPath.readMap() }
@@ -204,7 +209,8 @@ class CancellationResponsesParser : CliktCommand() {
                 appendLine("*Response:* ${response.response.trim()}")
             }
 
-            if ((builder.length + responseText.length) >= maxLength) {
+            val willExceedMaxLength = (builder.length + responseText.length) >= maxLength
+            if (willExceedMaxLength || dispatchEachResponse == true) {
                 dispatch()
                 builder = StringBuilder(responseText)
             } else {

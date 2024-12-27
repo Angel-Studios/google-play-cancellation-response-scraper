@@ -8,6 +8,9 @@ on:
     # - cron: '0 15 * * *'
 env:
   IMAGE_TAG: google-play-cancellation-scraper:latest
+  # Set to true if you want to dispatch each response as an
+  # individual Slack message. Not recommended for the first run.
+  DISPATCH_EACH_RESPONSE: false
 
 jobs:
   main:
@@ -38,6 +41,7 @@ jobs:
             -e SLACK_CHANNEL_NAME=${{ secrets.SLACK_CHANNEL_NAME }} \
             -e GCS_BUCKET_ID=${{ secrets.GCS_BUCKET_ID }} \
             -e SERVICE_ACCOUNT_JSON=${{ secrets.SERVICE_ACCOUNT_JSON }} \
+            -e DISPATCH_EACH_RESPONSE=${DISPATCH_EACH_RESPONSE} \
             -v .:/output \
             ${IMAGE_TAG}
 

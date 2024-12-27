@@ -23,5 +23,6 @@ for i in $(cat /config/package-map.txt | cut -d':' -f1); do
     --package-map-path /config/package-map.txt \
     --sku-map-path /config/sku-map.txt \
     --slack-channel-map-path /config/slack-channel-map.txt \
-    --slack-api-token ${SLACK_API_TOKEN}
+    --slack-api-token ${SLACK_API_TOKEN} \
+    --dispatch-each-response ${DISPATCH_EACH_RESPONSE}
 done

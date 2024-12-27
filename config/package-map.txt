@@ -1,2 +1,2 @@
-com.example.app1:Example App #1
-com.example.app2:Example App #2
+com.example.app1:Example App 1
+com.example.app2:Example App 2

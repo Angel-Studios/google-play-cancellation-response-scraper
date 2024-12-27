@@ -1,2 +1,2 @@
-example-sku-id-1:Example Subscription #1
-example-sku-id-2:Example Subscription #2
+example-sku-id-1:Example Subscription 1
+example-sku-id-2:Example Subscription 2
