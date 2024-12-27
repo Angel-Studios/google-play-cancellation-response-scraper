@@ -1,26 +1,24 @@
-FROM ubuntu:24.04
+FROM alpine:3.21.0
 
 # Install base dependencies
-RUN apt-get update && \
-    apt-get install -y apt-transport-https ca-certificates gnupg curl openjdk-21-jdk unzip wget
+RUN apk add --update python3 curl bash unzip gzip wget openjdk21
 
 # Install the Google Cloud CLI
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-
-RUN apt-get update && \
-    apt-get install -y google-cloud-cli
+RUN curl -sSL https://sdk.cloud.google.com > gcloud-sdk-installer && \
+    bash gcloud-sdk-installer --install-dir=/ --disable-prompts && \
+    rm gcloud-sdk-installer
 
 # Install Kotlin
-RUN wget https://github.com/JetBrains/kotlin/releases/download/v2.1.0/kotlin-compiler-2.1.0.zip
-RUN unzip /kotlin-compiler-2.1.0.zip && rm /kotlin-compiler-2.1.0.zip
+RUN wget https://github.com/JetBrains/kotlin/releases/download/v2.1.0/kotlin-compiler-2.1.0.zip && \
+    unzip /kotlin-compiler-2.1.0.zip && \
+    rm /kotlin-compiler-2.1.0.zip
 
 ADD scripts /scripts
 
 # Warm up the parser (download dependencies, compile the script, etc)
-ENV PATH=/kotlinc/bin:$PATH
-RUN /scripts/parser.main.kts || true
+RUN /kotlinc/bin/kotlin scripts/parser.main.kts || true
 
 ADD config /config
 
+ENV PATH=/google-cloud-sdk/bin:/kotlinc/bin:$PATH
 ENTRYPOINT ["/scripts/entrypoint.sh"]
