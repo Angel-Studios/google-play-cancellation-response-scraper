@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Initialize output directories
 for i in csv db; do
@@ -8,7 +9,7 @@ done
 # Activate Google Cloud service account
 KEYFILE=$(mktemp)
 echo ${SERVICE_ACCOUNT_JSON} | base64 -d > $KEYFILE
-gcloud auth activate-service-account --key-file=$KEYFILE || (rm -f $KEYFILE; exit 1)
+gcloud auth activate-service-account --key-file=$KEYFILE
 rm -f $KEYFILE
 
 for i in $(cat /config/package-map.txt | cut -d':' -f1); do
